@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  notebooks:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check devcontainer pin matches METALLDATA_REF
+        run: grep -q "$(cat METALLDATA_REF)" .devcontainer/devcontainer.json
+
+      - name: Read metalldata pin
+        id: pin
+        run: echo "ref=$(cat METALLDATA_REF)" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        env:
+          DOCKER_BUILD_RECORD_UPLOAD: false
+        with:
+          context: .
+          file: docker/Dockerfile
+          build-args: |
+            METALLDATA_REF=${{ steps.pin.outputs.ref }}
+          load: true
+          tags: mdt:ci
+          cache-from: type=gha,scope=${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.arch }}
+
+      - name: Execute notebooks
+        run: |
+          mkdir -p build && chmod 777 build
+          docker run --rm -v "$PWD:/work" -w /work -e TUTORIAL_DATA=/work/data mdt:ci \
+            bash scripts/run-notebooks.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: executed-notebooks-${{ matrix.arch }}
+          path: build/*.ipynb

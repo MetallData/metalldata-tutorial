@@ -1,0 +1,6 @@
+.git
+.github
+.devcontainer
+build
+**/*.ipynb
+**/.ipynb_checkpoints

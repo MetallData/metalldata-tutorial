@@ -1,0 +1,2 @@
+# notebooks/*.md (MyST) are the source of truth; .ipynb are generated.
+formats = "notebooks///md:myst,build///ipynb"
