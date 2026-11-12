@@ -50,11 +50,7 @@ The first run downloads the image, which takes a few minutes.
 ### 3. Open the notebooks
 
 Jupyter prints a link like `http://127.0.0.1:8888/lab?token=...`. Open it in
-your browser, then open `notebooks/01-getting-started.md`.
-
-The notebooks are stored as Markdown (MyST, via
-[jupytext](https://jupytext.readthedocs.io)). If one opens as plain text,
-right-click it and choose **Open With → Jupytext Notebook**.
+your browser, then open `notebooks/01-getting-started.ipynb`.
 
 To stop the tutorial, press **Ctrl+C** in the terminal.
 
@@ -75,6 +71,12 @@ To stop the tutorial, press **Ctrl+C** in the terminal.
 For editing the notebooks or contributing, clone this repository and choose
 **Reopen in Container** in VS Code. The first build compiles metalldata from
 source and takes a while. Later builds reuse the cache.
+
+In the repository, notebooks are stored as MyST Markdown (`notebooks/*.md`)
+so they diff cleanly. JupyterLab opens them as notebooks through
+[jupytext](https://jupytext.readthedocs.io). If one opens as plain text,
+right-click it and choose **Open With → Jupytext Notebook**. The Docker image
+converts them to `.ipynb`, so tutorial users only ever see notebooks.
 
 ### Your own metalldata build
 

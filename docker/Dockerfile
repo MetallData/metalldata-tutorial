@@ -45,6 +45,8 @@ ENV PATH=/opt/venv/bin:${PATH} \
 USER vscode
 WORKDIR /home/vscode/tutorial
 COPY --chown=vscode:vscode notebooks ./notebooks
+# Ship real .ipynb notebooks; the MyST .md files are only the source format.
+RUN cd notebooks && jupytext --to ipynb *.md && rm *.md
 COPY --chown=vscode:vscode data ./data
 ENV TUTORIAL_DATA=/home/vscode/tutorial/data
 
